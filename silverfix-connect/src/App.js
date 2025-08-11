@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
-import StatusDropdown from './StatusDropdown';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { RoleProvider, useRole } from './RoleContext';
+import WorkRequestCard from './WorkRequestCard';
 
-function App() {
-  const [status, setStatus] = useState('open');
+const AppRoutes = () => {
+  const { login } = useRole();
 
-  const handleChange = (e) => {
-    setStatus(e.target.value);
-    alert(`Status changed to ${e.target.value}`); // Simulate transition
-  };
+  useEffect(() => {
+    login('admin', 'testUser123');
+  }, [login]);
 
   return (
-    <div>
-      <h1>SilverFix Connect Test</h1>
-      <StatusDropdown currentStatus={status} onChange={handleChange} />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/dashboard/work-requests" element={<WorkRequestCard />} />
+        <Route path="/" element={<WorkRequestCard />} />
+      </Routes>
+    </Router>
   );
-}
+};
+
+const App = () => (
+  <RoleProvider>
+    <AppRoutes />
+  </RoleProvider>
+);
 
 export default App;
